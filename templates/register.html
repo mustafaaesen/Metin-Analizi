@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+
+<div class="auth-container d-flex">
+
+    <div class="container mx-auto align-self-center">
+        <div class="row">
+
+            <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-8 col-12 d-flex flex-column align-self-center mx-auto">
+                <div class="card mt-3 mb-3">
+                    <div class="card-body">
+
+                        <form method="POST" action="{{ url_for('register') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="row">
+
+                                <div class="col-md-12 mb-3">
+                                    <h2>Kayıt Ol</h2>
+                                    <p>Bilgilerinizi doldurarak hesabınızı oluşturun</p>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    {{ form.firstname.label(class="form-label") }}
+                                    {{ form.firstname(class="form-control",placeholder="Adınızı Girin") }}
+                                    {% for error in form.firstname.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    {{ form.lastname.label(class="form-label") }}
+                                    {{ form.lastname(class="form-control",placeholder="Soyadınızı Girin") }}
+                                    {% for error in form.lastname.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    {{ form.username.label(class="form-label") }}
+                                    {{ form.username(class="form-control",placeholder="Kullanıcı Adınızı Belirleyin") }}
+                                    {% for error in form.username.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    {{ form.email.label(class="form-label") }}
+                                    {{ form.email(class="form-control",placeholder="E-Posta Adresinizi Girin") }}
+                                    {% for error in form.email.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    {{ form.password.label(class="form-label") }}
+                                    {{ form.password(class="form-control",plcaeholder="Parolanızı Belirleyin") }}
+                                    {% for error in form.password.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    {{ form.confirm.label(class="form-label") }}
+                                    {{ form.confirm(class="form-control",placeholder="Parolanızı Doğrulayın") }}
+                                    {% for error in form.confirm.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-12 mb-4">
+                                    {{ form.submit(class="btn btn-secondary w-100") }}
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="text-center">
+                                        <p class="mb-0">
+                                            Zaten bir hesabınız var mı?
+                                            <a href="{{ url_for('login') }}" class="text-warning">Giriş Yapın</a>
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

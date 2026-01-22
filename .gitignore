@@ -1,0 +1,21 @@
+# Virtualenv
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Flask
+instance/
+
+# Environment
+.env
+
+# Model caches
+.cache/
+.cache/torch/
+.cache/huggingface/
+~/.cache/huggingface/
+
+# OS
+.DS_Store

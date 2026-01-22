@@ -1,0 +1,302 @@
+{% extends "layout.html" %}
+{% block title %}Analiz Detayı{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-3">Analiz Detayı</h2>
+    <hr>
+
+    <!-- Orijinal Metin -->
+    <div class="card mb-4">
+        <div class="card-header">Orijinal Metin</div>
+        <div class="card-body">
+            <p>{{ analysis.text }}</p>
+        </div>
+    </div>
+
+
+
+    <!-- Özet -->
+    <div class="card mb-4">
+        <div class="card-header">Metin Özeti</div>
+        <div class="card-body">
+            {% if analysis.summary %}
+                <p>{{ analysis.summary }}</p>
+            {% else %}
+                <p><em>Özet bulunamadı.</em></p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Anahtar Kelimeler (Ham) -->
+    <div class="card mb-4">
+        <div class="card-header">Anahtar Kelimeler</div>
+        <div class="card-body">
+            {% if analysis.keywords %}
+                <p>{{ analysis.keywords }}</p>
+            {% else %}
+                <p><em>Anahtar kelime bulunamadı.</em></p>
+            {% endif %}
+        </div>
+    </div>
+
+    <p class="text-muted">Oluşturulma Tarihi: {{ analysis.created_at }}</p>
+    <hr>
+
+    <!-- AREA -->
+    <div class="card mb-4">
+        <div class="card-header">Cümlelere Duygu Değişimi</div>
+        <div class="card-body">
+            <div id="s-line-area"></div>
+        </div>
+    </div>
+
+    <!-- DONUT -->
+    <div class="card mb-4">
+        <div class="card-header">Anahtar Kelime Dağılımı</div>
+        <div class="card-body">
+            <div id="donut-chart"></div>
+        </div>
+    </div>
+
+    <!-- RADIAL -->
+    <div class="card mb-4">
+        <div class="card-header">Tüm Metnin Duygu Skoru(Genel)</div>
+        <div class="card-body">
+            <div id="radial-chart"></div>
+            <div id="sentiment-summary" class="mt-3"></div>
+
+
+        </div>
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Geri Dön</a>
+    <br><br><br>
+</div>
+{% endblock %}
+
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* ========= AREA ========= */
+    new ApexCharts(
+        document.querySelector("#s-line-area"),
+        {
+            chart: { type: 'area', height: 350 },
+            stroke: { curve: 'smooth' },
+            dataLabels: { enabled: false },
+            series: [
+                { name: 'Pozitif', data: {{ sentiment_positive_series | tojson }} },
+                { name: 'Negatif', data: {{ sentiment_negative_series | tojson }} },
+                { name: 'Nötr',  data: {{ sentiment_neutral_series  | tojson }} }
+            ],
+           xaxis: {
+                categories: {{ sentence_indexes | tojson }},
+                title: { text: "Cümleler" },
+                labels: {
+                    formatter: function (value) {
+                        return value + ". cümle";
+                    }
+                }
+            }
+
+        }
+    ).render();
+    console.log("DONUT LABELS:", {{ keyword_labels | tojson }});
+    console.log("DONUT VALUES:", {{ keyword_values | tojson }});
+
+    var donutChart = {
+        chart: {
+            height: 350,
+            type: 'donut',
+            toolbar: { show: false }
+        },
+        series: {{ keyword_values | tojson }},
+        labels: {{ keyword_labels | tojson }},
+        legend: {
+            position: 'right'
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " kez geçti";
+                }
+            }
+        },
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '65%',
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true,
+                            label: 'Toplam',
+                            formatter: function (w) {
+                                return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    new ApexCharts(
+        document.querySelector("#donut-chart"),
+        donutChart
+    ).render();
+
+
+
+/* ========= RADIAL (ORTADA GENEL, DIŞTA 3 HALKA) ========= */
+const overallScore  = Math.round(({{ analysis.sentiment_compound }} + 1) * 50);
+const positiveScore = Math.round({{ analysis.sentiment_pos }} * 100);
+const neutralScore  = Math.round({{ analysis.sentiment_neu }} * 100);
+const negativeScore = Math.round({{ analysis.sentiment_neg }} * 100);
+
+new ApexCharts(
+    document.querySelector("#radial-chart"),
+    {
+        chart: { type: 'radialBar', height: 350 },
+        series: [
+            positiveScore,
+            neutralScore,
+            negativeScore
+        ],
+        labels: ['Pozitif', 'Nötr', 'Negatif'],
+        colors: ['#28c76f', '#ff9f43', '#ea5455'],
+        plotOptions: {
+            radialBar: {
+                hollow: {
+                    size: '40%'
+                },
+                track: {
+                    background: '#f2f2f2',
+                    strokeWidth: '100%'
+                },
+                dataLabels: {
+                    name: {
+                        fontSize: '15px'
+                    },
+                    value: {
+                        fontSize: '14px',
+                        formatter: val => val + '%'
+                    },
+                    total: {
+                        show: true,
+                        label: 'Genel',
+                        formatter: () => overallScore + '%'
+                    }
+                }
+            }
+        }
+    }
+).render();
+
+const label = "{{ analysis.sentiment_label }}";
+const compound = {{ analysis.sentiment_compound }};
+const pos = {{ analysis.sentiment_pos }};
+const neu = {{ analysis.sentiment_neu }};
+const neg = {{ analysis.sentiment_neg }};
+
+// ---------- GENEL ÖZET ----------
+let badgeClass = "bg-secondary";
+if (label === "pozitif") badgeClass = "bg-success";
+if (label === "negatif") badgeClass = "bg-danger";
+if (label === "nötr")    badgeClass = "bg-warning text-dark";
+
+let summaryHtml = `
+<div class="mb-3">
+    <h6>
+        Genel Etiket:
+        <span class="badge ${badgeClass}">
+            ${label.toUpperCase()}
+        </span>
+    </h6>
+
+    <p class="mb-1">
+        <strong>Genel Skor :</strong>
+        ${compound.toFixed(3)}
+    </p>
+
+    <p class="mb-0 text-muted">
+        Pozitif: %${Math.round(pos * 100)} |
+        Nötr: %${Math.round(neu * 100)} |
+        Negatif: %${Math.round(neg * 100)}
+    </p>
+</div>
+
+<h6>Genel Duygu Yorumu</h6>
+`;
+
+
+// ---------- DİNAMİK YORUM ----------
+let explanation = "";
+
+if (label === "pozitif") {
+    if (neu > 0.6) {
+        explanation = `
+        <p>
+            Metin büyük oranda nötr bir dil kullanmaktadır.
+            Ancak pozitif ifadelerin negatif ifadelere göre daha baskın olması
+            nedeniyle genel duygu <strong>pozitif</strong> olarak değerlendirilmiştir.
+        </p>`;
+    } else {
+        explanation = `
+        <p>
+            Metinde pozitif ifadeler belirgin şekilde öne çıkmaktadır.
+            Genel duygu skoru, metnin olumlu bir ton taşıdığını göstermektedir.
+        </p>`;
+    }
+}
+
+if (label === "negatif") {
+    if (neu > 0.6) {
+        explanation = `
+        <p>
+            Metnin büyük bölümü nötr ifadelerden oluşmaktadır.
+            Ancak negatif ifadelerin daha baskın olması nedeniyle
+            genel duygu <strong>negatif</strong> olarak değerlendirilmiştir.
+        </p>`;
+    } else {
+        explanation = `
+        <p>
+            Metinde negatif ifadeler belirgin şekilde baskındır.
+            Bu durum genel duygu skoruna da yansımıştır.
+        </p>`;
+    }
+}
+
+if (label === "nötr") {
+    explanation = `
+    <p>
+        Metin ağırlıklı olarak nötr bir dil kullanmaktadır.
+        Pozitif ve negatif ifadeler dengeli seviyededir ve
+        belirgin bir duygusal yönelim gözlemlenmemektedir.
+    </p>`;
+}
+
+summaryHtml += explanation;
+
+
+// ---------- VADER AÇIKLAMA ----------
+summaryHtml += `
+<small class="text-muted">
+    Bu analiz VADER duygu analizi yöntemine dayanmaktadır.
+    Genel etiket, pozitif ve negatif ifadelerin yönünü temsil eden
+    <em>compound score</em> üzerinden belirlenir.
+    Bu nedenle metin büyük ölçüde nötr ifadeler içerse bile,
+    hafif bir eğilim genel etiketi etkileyebilir.
+</small>
+`;
+
+document.getElementById("sentiment-summary").innerHTML = summaryHtml;
+
+
+});
+</script>
+{% endblock %}

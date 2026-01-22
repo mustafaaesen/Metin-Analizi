@@ -1,0 +1,302 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+
+
+
+                <div class="middle-content container-xxl p-0">
+
+      
+                        
+                    <div class="account-settings-container layout-top-spacing">
+    
+                        <div class="account-content">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <h2>Profil</h2>
+
+                                    <ul class="nav nav-pills" id="animateLine" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="animated-underline-home-tab" data-bs-toggle="tab" href="#animated-underline-home" role="tab" aria-controls="animated-underline-home" aria-selected="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Bilgiler</button>
+                                        </li>
+                                       
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="animated-underline-preferences-tab" data-bs-toggle="tab" href="#animated-underline-preferences" role="tab" aria-controls="animated-underline-preferences" aria-selected="false" tabindex="-1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Bilgilerini Güncelle</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="animated-underline-contact-tab" data-bs-toggle="tab" href="#animated-underline-contact" role="tab" aria-controls="animated-underline-contact" aria-selected="false" tabindex="-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>Parola Değiştir</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+    
+                            <div class="tab-content" id="animateLineContent-4">
+                                <div class="tab-pane fade show active" id="animated-underline-home" role="tabpanel" aria-labelledby="animated-underline-home-tab">
+
+                                        <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                            <form class="section general-info">
+                                                <div class="info">
+                                                    <h6 class="">Hoşgeldin <strong>{{user.username}}</strong> !!!</h6>
+                                                     <div class="row">
+                                                        <div class="col-xl-3 col-lg-12 col-md-12 layout-spacing">
+                                                            <div class="section general-info">
+                                                                <div class="info">
+                                                                    <h6 class="">İsim</h6>
+                                                                    <p>{{user.firstname}}</p>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                    
+                                                        <div class="col-xl-3 col-lg-12 col-md-12 layout-spacing">
+                                                            <div class="section general-info">
+                                                                <div class="info">
+                                                                    <h6 class="">Soyisim</h6>
+                                                                    <p>{{user.lastname}}</p>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-xl-3 col-lg-12 col-md-12 layout-spacing">
+                                                            <div class="section general-info">
+                                                                <div class="info">
+                                                                    <h6 class="">Kullanıcı Adı</h6>
+                                                                    <p>{{user.username}}</p>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-3 col-lg-12 col-md-12 layout-spacing">
+                                                            <div class="section general-info">
+                                                                <div class="info">
+                                                                    <h6 class="">E-Posta Adresi</h6>
+                                                                    <p>{{user.email}}</p>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        
+                            
+                                                        
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+          
+                                    </div>
+                                    
+                                </div>
+                               
+    
+                                <div class="tab-pane fade" id="animated-underline-preferences" role="tabpanel" aria-labelledby="animated-underline-preferences-tab">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                            <form method="POST"
+                                                action="{{ url_for('edit_profile') }}"
+                                                class="section general-info">
+
+                                              {{ profile_form.hidden_tag() }}
+
+                                              <div class="info">
+                                                  <h6 class="">
+                                                      <strong>{{ user.username }}</strong> Bilgilerini Güncelliyorsun!!!
+                                                  </h6>
+
+                                                  <div class="row">
+                                                      <div class="col-lg-11 mx-auto">
+                                                          <div class="row">
+                                                              <div class="col-xl-10 col-lg-12 col-md-8 mt-md-0 mt-4">
+                                                                  <div class="form">
+                                                                      <div class="row">
+
+                                                                          <!-- İSİM -->
+                                                                          <div class="col-md-6">
+                                                                              <div class="form-group">
+                                                                                  <label for="firstname">İsim</label>
+                                                                                  <input type="text"
+                                                                                        class="form-control mb-3"
+                                                                                        id="firstname"
+                                                                                        name="firstname"
+                                                                                        value="{{ user.firstname }}">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- SOYİSİM -->
+                                                                          <div class="col-md-6">
+                                                                              <div class="form-group">
+                                                                                  <label for="lastname">Soyisim</label>
+                                                                                  <input type="text"
+                                                                                        class="form-control mb-3"
+                                                                                        id="lastname"
+                                                                                        name="lastname"
+                                                                                        value="{{ user.lastname }}">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- KULLANICI ADI -->
+                                                                          <div class="col-md-6">
+                                                                              <div class="form-group">
+                                                                                  <label for="username">Kullanıcı Adı</label>
+                                                                                  <input type="text"
+                                                                                        class="form-control mb-3"
+                                                                                        id="username"
+                                                                                        name="username"
+                                                                                        value="{{ user.username }}">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- EMAIL -->
+                                                                          <div class="col-md-6">
+                                                                              <div class="form-group">
+                                                                                  <label for="email">E-Posta Adresi</label>
+                                                                                  <input type="email"
+                                                                                        class="form-control mb-3"
+                                                                                        id="email"
+                                                                                        name="email"
+                                                                                        value="{{ user.email }}">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- MEVCUT PAROLA (ZORUNLU GÜVENLİK) -->
+                                                                          <div class="col-md-12">
+                                                                              <div class="form-group">
+                                                                                  <label for="current_password">Mevcut Parola</label>
+                                                                                  <input type="password"
+                                                                                        class="form-control mb-3"
+                                                                                        id="current_password"
+                                                                                        name="current_password"
+                                                                                        placeholder="Mevcut parolanızı girin"
+                                                                                        autocomplete="current-password">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- SUBMIT -->
+                                                                          <div class="col-md-12 mt-1">
+                                                                              <div class="form-group text-end">
+                                                                                  <button type="submit"
+                                                                                          class="btn btn-secondary">
+                                                                                      Bilgileri Güncelle
+                                                                                  </button>
+                                                                              </div>
+                                                                          </div>
+
+                                                                      </div>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </form>
+
+                                        </div>
+          
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="animated-underline-contact" role="tabpanel" aria-labelledby="animated-underline-contact-tab">
+                                    
+                                    <div class="row">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
+                                            <form method="POST"
+                                                action="{{ url_for('profile_password') }}"
+                                                class="section general-info">
+
+                                              {{ password_form.hidden_tag() }}
+
+                                              <div class="info">
+                                                  <h6 class="">
+                                                      <strong>{{ user.username }}</strong> Parolanı Güncelliyorsun !!!
+                                                  </h6>
+
+                                                  <div class="row">
+                                                      <div class="col-lg-11 mx-auto">
+                                                          <div class="row">
+
+                                                              <div class="col-xl-2 col-lg-12 col-md-4"></div>
+
+                                                              <div class="col-xl-10 col-lg-12 col-md-8 mt-md-0 mt-4">
+                                                                  <div class="form">
+                                                                      <div class="row">
+
+                                                                          <!-- MEVCUT PAROLA -->
+                                                                          <div class="col-md-12">
+                                                                              <div class="form-group">
+                                                                                  <label for="current_password">Mevcut Parola</label>
+                                                                                  <input type="password"
+                                                                                        class="form-control mb-3"
+                                                                                        id="current_password"
+                                                                                        name="current_password"
+                                                                                        placeholder="Mevcut Parolanızı Girin"
+                                                                                        autocomplete="current-password">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- YENİ PAROLA -->
+                                                                          <div class="col-md-6">
+                                                                              <div class="form-group">
+                                                                                  <label for="new_password">Yeni Parola</label>
+                                                                                  <input type="password"
+                                                                                        class="form-control mb-3"
+                                                                                        id="new_password"
+                                                                                        name="new_password"
+                                                                                        placeholder="Yeni Parolanızı Girin"
+                                                                                        autocomplete="new-password">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- PAROLA DOĞRULA -->
+                                                                          <div class="col-md-6">
+                                                                              <div class="form-group">
+                                                                                  <label for="confirm_password">Parola Doğrula</label>
+                                                                                  <input type="password"
+                                                                                        class="form-control mb-3"
+                                                                                        id="confirm_password"
+                                                                                        name="confirm_password"
+                                                                                        placeholder="Parolanızı Doğrulayın"
+                                                                                        autocomplete="new-password">
+                                                                              </div>
+                                                                          </div>
+
+                                                                          <!-- SUBMIT -->
+                                                                          <div class="col-md-12 mt-1">
+                                                                              <div class="form-group text-end">
+                                                                                  <button type="submit"
+                                                                                          class="btn btn-secondary">
+                                                                                      Kaydet
+                                                                                  </button>
+                                                                              </div>
+                                                                          </div>
+
+                                                                      </div>
+                                                                  </div>
+                                                              </div>
+
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </form>
+
+                                        </div>
+          
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+       
+
+{% endblock content %}
+
+                                    

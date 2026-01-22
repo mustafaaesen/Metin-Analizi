@@ -1,0 +1,28 @@
+# Core Backend
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Flask-WTF
+psycopg2-binary
+
+# NLP - Basics
+textblob
+langdetect
+nltk
+sumy
+
+# Translation
+googletrans==4.0.0rc1
+
+# Sentiment
+vaderSentiment
+
+# Keyword Extraction
+keybert
+sentence-transformers
+
+# Summarization
+transformers
+torch
+accelerate

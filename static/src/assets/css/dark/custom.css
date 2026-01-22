@@ -1,0 +1,147 @@
+/* =================================================
+   MOBILE SIDEBAR – LOOP FREE FINAL FIX
+   ================================================= */
+
+@media (max-width: 991px) {
+
+  /* Sidebar AÇIKKEN */
+  .main-container.sbar-open .sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    max-height: 100vh;
+    overflow-y: auto;          /* 🔥 scroll sidebar'da */
+    transform: translateX(0) !important;
+    z-index: 1050;
+  }
+
+  /* 🔥 EN KRİTİK SATIRLAR */
+  body.sidebar-noneoverflow {
+    overflow-y: auto !important;   /* body scroll ASLA kilitlenmez */
+    position: relative !important;
+  }
+
+  html, body {
+    height: auto !important;
+  }
+
+}
+
+/* =================================================
+   HOMEPAGE SLIDER – ANALIZ YAP CTA (UPDATED FINAL)
+   ================================================= */
+
+/* Slider container referans noktası */
+#style1 {
+    position: relative;
+}
+
+/* CTA butonu – DESKTOP */
+#style1 .carousel-cta {
+    position: absolute;
+    left: 50%;
+    top: 72%;                     /* 🔥 desktop dengeli */
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    text-align: center;
+    pointer-events: auto;
+}
+
+/* CTA buton görünümü */
+#style1 .carousel-cta .btn {
+    padding: 14px 36px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.3);
+    transition: all .25s ease;
+}
+
+/* Desktop hover efekti */
+@media (hover: hover) {
+    #style1 .carousel-cta .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+}
+
+/* Mobil ince ayar */
+@media (max-width: 768px) {
+    #style1 .carousel-cta {
+        top: 85%;                 /* 🔥 mobilde CTA aşağı iner */
+    }
+
+    #style1 .carousel-cta .btn {
+        font-size: 1rem;
+        padding: 12px 28px;
+        border-radius: 28px;
+    }
+}
+
+/* =================================================
+   NAVBAR – SIDEBAR STATE FIX (THEME COMPATIBLE)
+   ================================================= */
+
+/* Sidebar KAPALI → navbar tam genişlik */
+.header.navbar:not(.expand-header) {
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+/* Sidebar AÇIK → navbar sidebar kadar kayar */
+.header.navbar.expand-header {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+}
+
+/* Mobilde navbar HER ZAMAN full */
+@media (max-width: 991px) {
+    .header.navbar,
+    .header.navbar.expand-header {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* ===== FOOTER RESPONSIVE FIX ===== */
+
+@media (max-width: 767.98px) {
+
+  footer.footer-wrapper .row {
+    text-align: center;
+  }
+
+  footer.footer-wrapper .col-md-4 {
+    text-align: center !important;
+    margin-bottom: 8px;
+  }
+
+  footer.footer-wrapper .col-md-4:last-child {
+    margin-bottom: 0;
+  }
+
+  footer.footer-wrapper .footer-text {
+    font-size: 14px;
+  }
+
+  footer.footer-wrapper .footer-link {
+    display: inline-block;
+  }
+}
+
+/* ===== MOBILE: CAROUSEL CONTROLS & INDICATORS KAPAT ===== */
+
+@media (max-width: 768px) {
+
+  /* Sağ-sol oklar */
+  .carousel-control-prev,
+  .carousel-control-next {
+    display: none !important;
+  }
+
+  /* 1-2-3 indicator noktaları */
+  .carousel-indicators {
+    display: none !important;
+  }
+}

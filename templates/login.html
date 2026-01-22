@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="auth-container d-flex">
+
+        <div class="container mx-auto align-self-center">
+    
+            <div class="row">
+    
+                <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-8 col-12 d-flex flex-column align-self-center mx-auto">
+                    <div class="card mt-3 mb-3">
+                        <div class="card-body">
+
+                            <form method="POST" action="{{url_for('login')}}">
+
+                              {{form.hidden_tag()}}
+
+                                <div class="row">
+                                  <div class="col-md-12 mb-3">
+                                      
+                                      <h2>Giriş Yap</h2>
+                                      <p>Bilgilerinizi doldurarak hesabınıza giriş yapın</p>
+                                      
+                                  </div>
+                                  <div class="col-md-12">
+                                      {{ form.username.label(class="form-label") }}
+                                      {{ form.username(class="form-control",placeholder="Kullanıcı Aadınızı Girin") }}
+                                      {% for error in form.username.errors %}
+                                          <div class="text-danger">{{ error }}</div>
+                                      {% endfor %}
+
+                                  </div>
+                                  <div class="col-12">
+                                      {{form.password.label(class="form-label")}}
+                                      {{form.password(class="form-control",placeholder="Parolanızı Girin")}}
+                                      {% for error in form.password.errors %}
+                                          <div class="text-danger">{{ error }}</div>
+                                      {% endfor %}
+                                  </div>
+                                  
+                                  
+                                  <div class="col-12">
+                                     {{ form.submit(class="btn btn-secondary w-100") }}
+                                  </div>
+                                
+                                  
+      
+                                  <div class="col-12">
+                                      <div class="text-center">
+                                          <p class="mb-0">Hesabınız yok mu? <a href="{{url_for('register')}}" class="text-warning">Kayıt Olun</a></p>
+                                      </div>
+                                  </div>
+                                  
+                                </div>
+                            
+                            
+                            </form>
+
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+
+    </div>
+    
+
+
+
+{% endblock %}

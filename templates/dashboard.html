@@ -1,0 +1,215 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Kontrol Paneli</h1>
+<hr>
+
+<div class="d-flex justify-content-between align-items-center">
+    <h2>Analizlerim</h2>
+
+    <!-- ANALİZ EKLE BUTONU -->
+    <a href="{{ url_for('addanalysis') }}" class="btn btn-success">
+        + Yeni Analiz Ekle
+    </a>
+</div>
+
+<br>
+
+
+
+
+<div class="row layout-top-spacing">
+
+    <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
+        <div class="widget-content widget-content-area br-8">
+
+            <table id="zero-config"
+                   class="table table-hover align-middle "
+                   style="width:100%">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Analiz Başlığı</th>
+                        <th>Oluşturulduğu Tarih</th>
+                        <th class="no-sort">İşlemler</th>
+
+                        
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% if analyses and analyses|length > 0 %}
+                    {% for analysis in analyses %}
+                    <tr>
+                      <th scope="row">{{ analysis.id }}</th>
+
+                      <!-- METİN TIKLANABİLİR HALE GETİRİLDİ -->
+                      <td>
+                        <a href="{{ url_for('analysis_detail', analysis_id=analysis.id) }}"
+                          class="text-decoration-none fw-semibold">
+                            {{ analysis.title }}
+                        </a>
+                      </td>
+
+                      <td>{{ analysis.created_at.strftime('%d %b %Y') }}</td>
+
+                      <!-- İşlemler sütunu (şimdilik boş) -->
+                      <td> <button class="btn btn-danger btn-sm"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#deleteModal{{ analysis.id }}">
+                              Analizi Sil
+                          </button>
+
+                          <div class="modal fade" id="deleteModal{{ analysis.id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+
+                                <div class="modal-header">
+                                  <h5 class="modal-title">Analizi Sil</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                  <p>
+                                    <strong>{{ analysis.title }}</strong> başlıklı analizi silmek
+                                    istediğinize emin misiniz?
+                                  </p>
+                                </div>
+
+                                <div class="modal-footer">
+                                  <button type="button"
+                                          class="btn btn-secondary"
+                                          data-bs-dismiss="modal">
+                                    Vazgeç
+                                  </button>
+
+                                  <form method="POST"
+                                        action="{{ url_for('delete_analysis', analysis_id=analysis.id) }}">
+                                    <button type="submit" class="btn btn-danger">
+                                      Sil
+                                    </button>
+                                  </form>
+                                </div>
+
+                              </div>
+                            </div>
+                          </div>
+
+
+                      </td>
+
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                      <td colspan="4" class="text-muted text-center">
+                        Henüz analiziniz bulunmuyor.
+                        <a href="{{ url_for('addanalysis') }}" class="fw-bold">
+                          Hemen ekleyin!
+                        </a>
+                      </td>
+                    </tr>
+                {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    $('#zero-config').DataTable({
+        destroy: true,
+        retrieve: true,
+
+        dom:
+            "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l>" +
+            "<'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+            "<'table-responsive'tr>" +
+            "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'" +
+            "<'dt--pages-count mb-sm-0 mb-3'i>" +
+            "<'dt--pagination'p>>",
+          columnDefs: [
+              {
+                  targets: [3],      // İşlemler kolonu
+                  orderable: false,  // sıralama kapalı
+                  searchable: false  // aramaya da girmesin (isteğe bağlı)
+              }
+          ],
+
+
+          language: {
+          search: "",
+          searchPlaceholder: "Analizlerinde Ara...",
+          lengthMenu: "Göster : _MENU_",
+          info: "_PAGE_. sayfa / _PAGES_",
+          infoEmpty: "Kayıt bulunamadı",
+          infoFiltered: "(toplam _MAX_ kayıt içinden)",
+          zeroRecords: "Eşleşen kayıt bulunamadı",
+          paginate: {
+            previous:
+                '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" ' +
+                'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+                'stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">' +
+                '<line x1="19" y1="12" x2="5" y2="12"></line>' +
+                '<polyline points="12 19 5 12 12 5"></polyline>' +
+                '</svg>',
+
+            next:
+                '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" ' +
+                'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+                'stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">' +
+                '<line x1="5" y1="12" x2="19" y2="12"></line>' +
+                '<polyline points="12 5 19 12 12 19"></polyline>' +
+                '</svg>'
+        }
+
+      },
+
+
+        pageLength: 10,
+        stripeClasses: []
+    });
+
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (window.jQuery && $.fn.DataTable) {
+        $('#analysis-table').DataTable({
+            pageLength: 5,
+            lengthChange: false,
+            info: false,
+            language: {
+                search: "Ara:",
+                paginate: {
+                    next: "İleri",
+                    previous: "Geri"
+                }
+            }
+        });
+    } else {
+        console.error("DataTable yüklenmedi");
+    }
+
+});
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+{% endblock %}

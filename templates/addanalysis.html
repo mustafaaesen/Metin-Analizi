@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Yeni Metin Analizi</h2>
+    <hr>
+
+    <!-- Flash mesajları -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} mt-2">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- ANALİZ FORMU -->
+    <form method="POST" action="{{ url_for('addanalysis') }}">
+
+        <!-- 🔹 Analiz Başlığı -->
+        <div class="form-group mb-3">
+            <label for="title">Analiz Başlığı</label>
+            <input
+                type="text"
+                name="title"
+                id="title"
+                class="form-control"
+                placeholder="Analizinizi adlandırın.."
+            >
+        </div>
+
+        <!-- 🔹 Analiz Metni -->
+        <div class="form-group mb-3">
+            <label for="text">Analiz Edilecek Metin</label>
+            <textarea 
+                name="text" 
+                id="text" 
+                class="form-control" 
+                rows="8" 
+                placeholder="Analiz etmek istediğiniz metni buraya yazın..."
+                required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Analiz Et
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+
+
+<footer class="footer-wrapper main-content">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+
+            <!-- SOL -->
+            <div class="col-md-4 text-start">
+                <p class="mb-0 footer-text">
+                    &copy; {{ current_year if current_year else "2025" }} Metin Analizi Platformu
+                </p>
+            </div>
+
+            <!-- ORTA -->
+            <div class="col-md-4 text-center">
+                <a href="{{ url_for('index') }}" class="footer-link">Anasayfa</a>
+                <span class="mx-2">·</span>
+                <a href="{{ url_for('faq') }}" class="footer-link">Hakkında</a>
+            </div>
+
+            <!-- SAĞ -->
+            <div class="col-md-4 text-end">
+                <p class="mb-0 footer-text">
+                    Made by
+                    <a
+                        href="https://mustafaesen.com.tr"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="footer-brand"
+                    >
+                        mustafaesen
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</footer>
