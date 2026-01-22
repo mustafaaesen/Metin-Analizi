@@ -1,71 +1,78 @@
-#modellerin eğitiminde kullanılan dil olan ingilizce ve modeller daha iyi sonuç verebilrsinler
-#diye girlen metin ingilizce çevirlip modele verilecek çıktı tekrar Türkçeye çevirilecek
+# modellerin eğitiminde kullanılan dil olan İngilizceye çeviri
+# çıktı tekrar Türkçeye çevrilir
+# googletrans kullanılır (network hatalarına karşı try/except)
 
-from googletrans import Translator
 import re
+from googletrans import Translator
 
-translator=Translator()
+_translator = None
 
-def translate_to_en(text: str)->str:
-    #Türkçe metni ingilizceye çevirir
 
+def get_translator():
+    """
+    Translator nesnesini lazy-load ile üretir
+    """
+    global _translator
+    if _translator is None:
+        _translator = Translator()
+    return _translator
+
+
+def translate_to_en(text: str) -> str:
+    """
+    Türkçe metni İngilizceye çevirir
+    """
     try:
-        result=translator.translate(text, src="tr",dest="en")
+        translator = get_translator()
+        result = translator.translate(text, src="tr", dest="en")
         return result.text
     except Exception:
         return text
-    
 
-def translate_to_tr(text: str)->str:
 
+def translate_to_tr(text: str) -> str:
+    """
+    İngilizce metni Türkçeye çevirir
+    """
     try:
-        result=translator.translate(text, src="en", dest="tr")
+        translator = get_translator()
+        result = translator.translate(text, src="en", dest="tr")
         return result.text
-    
     except Exception:
         return text
 
-#metinleri modeller için çevirecek kısım
-# translate modelinin rate limit timeout gib hatalarına karşın try except yazıldı         
-
-
-#Yukarıdaki fonksiyonlar özet ve anahtar kelime pipeline ları için tüm emtni ingilizceye çevirir.
-#ancak duygu analizinde cümle bazlı analiz için cümlelerin türkçede ayrılıp ingilizceye çevirilerek duygu analizine
-#gönderilmesi için bunlara ek olarak cümle ayırma ve cümle çeviri fonksiyonları pipeline.py de kullanılmak üzere
-#eklendi
 
 def split_sentences_tr(text: str) -> list:
-    #Türkçe cümleleri ayırır geri döner
-
+    """
+    Türkçe metni cümlelere böler
+    """
     sentences = re.split(r'(?<=[.!?])\s+', text)
-    return [s.strip() for s in sentences if s.strip()]  
-
+    return [s.strip() for s in sentences if s.strip()]
 
 
 def translate_sentences_tr_to_en(text_tr: str) -> list:
-
-    #yukarıdaki fonksiyon yardımıyla cümlelere ayırır ve ingilizceye çevirir
-
-    sentences_tr=split_sentences_tr(text_tr)
-
+    """
+    Türkçe metni cümlelere ayırır ve her cümleyi İngilizceye çevirir
+    """
+    sentences_tr = split_sentences_tr(text_tr)
     results = []
 
-    for idx, sentence_tr in enumerate(sentences_tr, start=1):
+    translator = get_translator()
 
+    for idx, sentence_tr in enumerate(sentences_tr, start=1):
         try:
-            sentence_en=translator.translate(
-                sentence_tr,src="tr",dest="en"
+            sentence_en = translator.translate(
+                sentence_tr,
+                src="tr",
+                dest="en"
             ).text
-        
         except Exception:
-            sentence_en=sentence_tr #hata dönütü
-        
+            sentence_en = sentence_tr
 
         results.append({
-            "index":idx,
-            "text_tr":sentence_tr,
-            "text_en":sentence_en
+            "index": idx,
+            "text_tr": sentence_tr,
+            "text_en": sentence_en
         })
-    
 
     return results
