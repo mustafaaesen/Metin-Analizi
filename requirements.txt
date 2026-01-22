@@ -1,4 +1,12 @@
+# =========================
+# FORCE CPU TORCH (CRITICAL)
+# =========================
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.0
+
+# =========================
 # Core
+# =========================
 Flask
 Flask-SQLAlchemy
 Flask-Migrate
@@ -7,26 +15,39 @@ Flask-WTF
 Flask-Mail
 Flask-Limiter
 python-dotenv
+gunicorn
 
+# =========================
 # Database
+# =========================
 psycopg2-binary
 
+# =========================
 # NLP basics
+# =========================
 textblob
 langdetect
 nltk
 sumy
 
+# =========================
 # Translation
+# =========================
 googletrans==4.0.0rc1
 
+# =========================
 # Sentiment
+# =========================
 vaderSentiment
 
+# =========================
 # Keyword extraction
+# =========================
 keybert
 sentence-transformers
 
-# Transformers stack (CPU only torch separately)
+# =========================
+# Transformers stack
+# =========================
 transformers
 accelerate
