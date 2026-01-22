@@ -1,12 +1,17 @@
-# Core Backend
+# Core
 Flask
 Flask-SQLAlchemy
 Flask-Migrate
 Flask-Login
 Flask-WTF
+Flask-Mail
+Flask-Limiter
+python-dotenv
+
+# Database
 psycopg2-binary
 
-# NLP - Basics
+# NLP basics
 textblob
 langdetect
 nltk
@@ -18,11 +23,10 @@ googletrans==4.0.0rc1
 # Sentiment
 vaderSentiment
 
-# Keyword Extraction
+# Keyword extraction
 keybert
 sentence-transformers
 
-# Summarization
+# Transformers stack (CPU only torch separately)
 transformers
-torch
 accelerate
