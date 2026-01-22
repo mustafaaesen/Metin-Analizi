@@ -1,85 +1,97 @@
-# vader modeli kullanılarak duygu analizi yapılan kısım
-# her cümle için pos / neg / neu / compound skorları üretir
-# ardından metnin geneli için ortalama skorlar çıkarılır
+# anahtar kelimeleri çıkaran kısım
+# KeyBERT metinde en sık tekrarlanan anlamlı/anlamsız grupları çıkarır
 
-from .loader import get_vader
+import re
+from .loader import get_kw_model
 
 
-def analyze_sentence(sentence_en: str) -> dict:
+STOPWORDS = {
+    "ve", "veya", "ama", "mi", "de", "da", "çok", "az", "ile",
+    "bir", "bu", "şu", "o", "ben", "sen", "bana", "için", "olan",
+    "gibi", "daha", "her", "hiç"
+}
+
+
+def extract_keywords(text: str, top_n: int = 7):
     """
-    Tek bir İngilizce cümleyi VADER ile analiz eder
+    KeyBERT ile ham kelime gruplarını çıkarır
     """
-    vader = get_vader()  #  LAZY LOAD
-    scores = vader.polarity_scores(sentence_en)
+    kw_model = get_kw_model()  # 🔥 LAZY LOAD
 
-    return {
-        "neg": scores["neg"],
-        "neu": scores["neu"],
-        "pos": scores["pos"],
-        "compound": scores["compound"]
-    }
+    raw_keywords = kw_model.extract_keywords(
+        text,
+        keyphrase_ngram_range=(1, 2),
+        stop_words=None,        # KeyBERT Türkçe stopword desteklemez
+        top_n=top_n
+    )
+
+    return raw_keywords
 
 
-def interpret_compound(compound: float) -> str:
+def normalize_keywords(raw_keywords):
     """
-    Compound skora göre etiketi belirler
-    """
-    if compound >= 0.05:
-        return "pozitif"
-    elif compound <= -0.05:
-        return "negatif"
-    else:
-        return "nötr"
-
-
-def analyze_text(sentences: list[dict]) -> dict:
-    """
-    Cümle bazlı analiz yapar ve
-    metnin geneli için ortalama skorları hesaplar
+    KeyBERT tarafından üretilen ham phrase'leri
+    daha okunabilir ve anlamlı anahtar kelimelere dönüştürür
     """
 
-    sentences_results = []
+    cleaned = []
 
-    neg_scores = []
-    neu_scores = []
-    pos_scores = []
-    compound_scores = []
+    for kw, score in raw_keywords:
 
-    for item in sentences:
-        scores = analyze_sentence(item["text_en"])
+        # düşük skorluları ele
+        if score < 0.35:
+            continue
 
-        sentences_results.append({
-            "index": item["index"],
-            "text_tr": item["text_tr"],
-            "text_en": item["text_en"],
-            "neg": scores["neg"],
-            "neu": scores["neu"],
-            "pos": scores["pos"],
-            "compound": scores["compound"]
+        kw = kw.lower()
+        kw = re.sub(r"[^\w\s]", "", kw).strip()
+        parts = kw.split()
+
+        # tek kelime ama ekli/anlamsız
+        if len(parts) == 1:
+            if parts[0].endswith(("ları", "leri", "ması", "mesi")):
+                continue
+
+        # iki kelimeli bozuk n-gram'lar
+        if len(parts) == 2:
+            first, second = parts
+
+            if first.endswith(("mesi", "ması")):
+                continue
+
+            if second in STOPWORDS:
+                continue
+
+        cleaned.append(kw)
+
+    # tekilleştirme
+    cleaned = list(dict.fromkeys(cleaned))
+
+    return cleaned[:7]
+
+
+def get_keywords(text: str):
+    raw = extract_keywords(text)
+    return normalize_keywords(raw)
+
+
+def keyword_statistics(text: str, keywords: list[str]):
+    text = text.lower()
+    stats = []
+
+    for kw in keywords:
+        count = text.count(kw.lower())
+        if count == 0:
+            continue
+
+        stats.append({
+            "keyword": kw,
+            "value": count
         })
 
-        neg_scores.append(scores["neg"])
-        neu_scores.append(scores["neu"])
-        pos_scores.append(scores["pos"])
-        compound_scores.append(scores["compound"])
+    return stats
 
-    if compound_scores:
-        document_neg = sum(neg_scores) / len(neg_scores)
-        document_neu = sum(neu_scores) / len(neu_scores)
-        document_pos = sum(pos_scores) / len(pos_scores)
-        document_compound = sum(compound_scores) / len(compound_scores)
-    else:
-        document_neg = document_neu = document_pos = document_compound = 0.0
 
-    document_label = interpret_compound(document_compound)
-
-    return {
-        "sentences": sentences_results,
-        "document": {
-            "neg": document_neg,
-            "neu": document_neu,
-            "pos": document_pos,
-            "compound": document_compound,
-            "label": document_label
-        }
-    }
+def get_keywords_stats(text: str):
+    raw = extract_keywords(text)
+    final_keywords = normalize_keywords(raw)
+    return keyword_statistics(text, final_keywords)
