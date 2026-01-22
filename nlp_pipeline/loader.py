@@ -1,26 +1,35 @@
-from transformers import pipeline
-from keybert import KeyBERT
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+# loader.py (RENDER FREE SAFE)
 
-#nlp modellerinin yükleme  işlemlerini tek seferde halledecek loader doyası
-#rame alır ve sonraki her istekte hızlıca etkileşime geçmesini sağlar
-
-
-vader=SentimentIntensityAnalyzer()
-#duygu analizi yapacak vader modeli
+_vader = None
+_summarizer = None
+_kw_model = None
 
 
-#özet çıkarma DistilBART tiny model biraz ağırdır ama cahceten  preload edilirse her istekte yüklenmez
-
-summarizer=pipeline(
-
-    "summarization",
-    model="sshleifer/distilbart-cnn-12-6",#tiny model
-    device=-1 #cpu kullan
-)
+def get_vader():
+    global _vader
+    if _vader is None:
+        from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+        _vader = SentimentIntensityAnalyzer()
+    return _vader
 
 
-kw_model=KeyBERT("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
-#anahtar kelime çıkarımı için KeyBERT modeli 
+def get_summarizer():
+    global _summarizer
+    if _summarizer is None:
+        from transformers import pipeline
+        _summarizer = pipeline(
+            "summarization",
+            model="sshleifer/distilbart-cnn-12-6",
+            device=-1
+        )
+    return _summarizer
 
-#Bu dosya modellerin sadece 1 kez yüklenmesini sonraki aşamlarda performans arttırımı için yazılmıştır
+
+def get_kw_model():
+    global _kw_model
+    if _kw_model is None:
+        from keybert import KeyBERT
+        _kw_model = KeyBERT(
+            "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        )
+    return _kw_model
