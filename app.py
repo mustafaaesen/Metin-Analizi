@@ -75,6 +75,17 @@ app.config.from_object('config')
 db.init_app(app)
 migrate.init_app(app, db)
 
+from flask_migrate import upgrade
+from sqlalchemy.exc import OperationalError
+
+with app.app_context():
+    try:
+        upgrade()
+        print("✅ Database migrated successfully")
+    except OperationalError as e:
+        print("⚠️ Database not ready yet:", e)
+    except Exception as e:
+        print("⚠️ Migration error:", e)
 
 
 load_dotenv()
