@@ -12,7 +12,7 @@ from datetime import datetime
 
 from werkzeug.security import generate_password_hash#şifre hashlemek için
 from werkzeug.security import check_password_hash #parola karşılaştırması
-from nlp_pipeline.pipeline import run_pipeline
+
 from flask_mail import Mail,Message
 import os
 from dotenv import load_dotenv
@@ -268,7 +268,7 @@ def dashboard():
 @limiter.limit("5 per minute")
 @login_required
 def addanalysis():
-
+    from nlp_pipeline.pipeline import run_pipeline
     if request.method == "POST":
 
         text = request.form.get("text")
