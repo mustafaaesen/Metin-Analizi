@@ -1,5 +1,5 @@
 # =========================
-# FORCE CPU TORCH (CRITICAL)
+# FORCE CPU TORCH
 # =========================
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.1.0
@@ -7,28 +7,28 @@ torch==2.1.0
 # =========================
 # Core
 # =========================
-Flask
-Flask-SQLAlchemy
-Flask-Migrate
-Flask-Login
-Flask-WTF
-Flask-Mail
-Flask-Limiter
-python-dotenv
-gunicorn
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.5
+Flask-Login==0.6.3
+Flask-WTF==1.2.1
+Flask-Mail==0.9.1
+Flask-Limiter==3.5.0
+python-dotenv==1.0.1
+gunicorn==21.2.0
 
 # =========================
 # Database
 # =========================
-psycopg2-binary
+psycopg2-binary==2.9.9
 
 # =========================
 # NLP basics
 # =========================
-textblob
-langdetect
-nltk
-sumy
+textblob==0.17.1
+langdetect==1.0.9
+nltk==3.8.1
+sumy==0.11.0
 
 # =========================
 # Translation
@@ -38,16 +38,16 @@ googletrans==4.0.0rc1
 # =========================
 # Sentiment
 # =========================
-vaderSentiment
+vaderSentiment==3.3.2
 
 # =========================
-# Keyword extraction
+# Transformers STACK (STABLE)
 # =========================
-keybert
-sentence-transformers
+transformers==4.36.2
+accelerate==0.25.0
+sentence-transformers==2.2.2
 
 # =========================
-# Transformers stack
+# Keywords
 # =========================
-transformers
-accelerate
+keybert==0.8.4
