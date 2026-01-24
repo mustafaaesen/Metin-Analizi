@@ -47,6 +47,12 @@ transformers==4.36.2
 accelerate==0.25.0
 sentence-transformers==2.2.2
 
+
+Flask-WTF
+WTForms
+email-validator
+
+
 # =========================
 # Keywords
 # =========================
