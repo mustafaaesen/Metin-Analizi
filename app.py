@@ -120,7 +120,7 @@ limiter = Limiter(
     default_limits=["200 per day", "50 per hour"]
 )
 
-"""
+
 def render_error(code):  #sistemde alınabilecek hataların dinamik gösterimi için tanımlanan fonksiyon ve hata fırlatmalar
     error = ERROR_MESSAGES.get(
         code,
@@ -150,7 +150,7 @@ def render_error(code):  #sistemde alınabilecek hataların dinamik gösterimi i
 @app.errorhandler(504)
 def handle_errors(e):
     return render_error(e.code)
-"""
+
 
 @app.route("/")
 def index():
