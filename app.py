@@ -120,7 +120,7 @@ limiter = Limiter(
     default_limits=["200 per day", "50 per hour"]
 )
 
-
+"""
 def render_error(code):  #sistemde alınabilecek hataların dinamik gösterimi için tanımlanan fonksiyon ve hata fırlatmalar
     error = ERROR_MESSAGES.get(
         code,
@@ -150,7 +150,7 @@ def render_error(code):  #sistemde alınabilecek hataların dinamik gösterimi i
 @app.errorhandler(504)
 def handle_errors(e):
     return render_error(e.code)
-
+"""
 
 @app.route("/")
 def index():
@@ -280,58 +280,69 @@ def dashboard():
 @login_required
 def addanalysis():
     from nlp_pipeline.pipeline import run_pipeline
-    if request.method == "POST":
+    import json
 
-        text = request.form.get("text")
-        title = request.form.get("title")
+    try:
+        if request.method == "POST":
 
-        if not title or title.strip() == "":
-            flash("Analiz başlığı boş olamaz", "danger")
-            return redirect(url_for("addanalysis"))
+            text = request.form.get("text")
+            title = request.form.get("title")
 
-        if not text or text.strip() == "":
-            flash("Metin boş olamaz!", "danger")
-            return redirect(url_for("addanalysis"))
+            if not title or title.strip() == "":
+                flash("Analiz başlığı boş olamaz", "danger")
+                return redirect(url_for("addanalysis"))
 
-        result = run_pipeline(text)
+            if not text or text.strip() == "":
+                flash("Metin boş olamaz!", "danger")
+                return redirect(url_for("addanalysis"))
 
-        # --- SENTIMENT ---
-        sentiment_full = result.get("sentiment", {})
-        sentiment_doc = sentiment_full.get("document", {})
-        sentiment_sentences = sentiment_full.get("sentences", [])  
+            result = run_pipeline(text)
 
-        # document-level
-        sentiment_label = sentiment_doc.get("label")
-        sentiment_neg = sentiment_doc.get("neg", 0.0)
-        sentiment_neu = sentiment_doc.get("neu", 0.0)
-        sentiment_pos = sentiment_doc.get("pos", 0.0)
-        sentiment_compound = sentiment_doc.get("compound", 0.0)
+            # --- SENTIMENT ---
+            sentiment_full = result.get("sentiment", {})
+            sentiment_doc = sentiment_full.get("document", {})
+            sentiment_sentences = sentiment_full.get("sentences", [])
 
-        # --- SUMMARY & KEYWORDS ---
-        summary = result.get("summary")
-        keywords = result.get("keywords")
+            # document-level
+            sentiment_label = sentiment_doc.get("label")
+            sentiment_neg = sentiment_doc.get("neg", 0.0)
+            sentiment_neu = sentiment_doc.get("neu", 0.0)
+            sentiment_pos = sentiment_doc.get("pos", 0.0)
+            sentiment_compound = sentiment_doc.get("compound", 0.0)
 
-        new_analysis = Analysis(
-            user_id=session.get("user_id"),
-            title=title,
-            text=text,
-            sentiment_label=sentiment_label,
-            sentiment_neg=sentiment_neg,
-            sentiment_neu=sentiment_neu,
-            sentiment_pos=sentiment_pos,
-            sentiment_compound=sentiment_compound,
-            sentiment_sentences=sentiment_sentences,  
-            summary=summary,
-            keywords=keywords
-        )
+            # --- SUMMARY & KEYWORDS ---
+            summary = result.get("summary")
+            keywords = result.get("keywords")
 
-        db.session.add(new_analysis)
-        db.session.commit()
+            # 🔥 KRİTİK: JSON SERIALIZE
+            sentiment_sentences_json = json.dumps(sentiment_sentences, ensure_ascii=False)
+            keywords_json = json.dumps(keywords, ensure_ascii=False)
 
-        flash("Analiz oluşturma başarılı", "success")
-        return redirect(url_for("dashboard"))
+            new_analysis = Analysis(
+                user_id=session.get("user_id"),
+                title=title,
+                text=text,
+                sentiment_label=sentiment_label,
+                sentiment_neg=sentiment_neg,
+                sentiment_neu=sentiment_neu,
+                sentiment_pos=sentiment_pos,
+                sentiment_compound=sentiment_compound,
+                sentiment_sentences=sentiment_sentences_json,
+                summary=summary,
+                keywords=keywords_json
+            )
 
-    return render_template("addanalysis.html")
+            db.session.add(new_analysis)
+            db.session.commit()
+
+            flash("Analiz oluşturma başarılı", "success")
+            return redirect(url_for("dashboard"))
+
+        return render_template("addanalysis.html")
+
+    except Exception as e:
+        print("🔥 ADDANALYSIS ERROR:", repr(e))
+        raise
 
 
 
